@@ -71,6 +71,22 @@ export const QuestionsContext = createContext<IQuestionsContextProps>(
   {} as IQuestionsContextProps
 );
 
+const initialQuestions: Question[] = [
+  {
+    question: "Como devemos chamá-lo?",
+    placeholder: "Digite seu nome",
+    inputType: "input",
+  },
+  {
+    question: "Olá Usuário, Qual tipo de serviço você gostaria de contratar?",
+    inputType: "choice",
+    choices: [
+      { key: 1, choice: "Software House" },
+      { key: 2, choice: "Integracoes de Sistemas" },
+    ],
+  },
+];
+
 const initialState: State = {
   isLoading: true,
   viewIndex: 0,
@@ -78,21 +94,7 @@ const initialState: State = {
   selectedService: null,
   data: { questionary: [] },
   userName: "Usuário",
-  questions: [
-    {
-      question: "Como devemos chamá-lo?",
-      placeholder: "Digite seu nome",
-      inputType: "input",
-    },
-    {
-      question: "Olá Usuário, Qual tipo de serviço você gostaria de contratar?",
-      inputType: "choice",
-      choices: [
-        { key: 1, choice: "Software House" },
-        { key: 2, choice: "Integracoes de Sistemas" },
-      ],
-    },
-  ],
+  questions: initialQuestions,
   isNavigating: false,
 };
 
@@ -317,8 +319,13 @@ const questionsReducer = (state: State, action: Action): State => {
 
     case "RESET_FORM": {
       return {
-        ...initialState,
-        questions: initialState.questions,
+        ...state,
+        questionIndex: 0,
+        selectedService: null,
+        data: { questionary: [] },
+        userName: "Usuário",
+        questions: initialQuestions,
+        viewIndex: 0,
         isNavigating: false,
       };
     }
