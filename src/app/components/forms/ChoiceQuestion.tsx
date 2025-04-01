@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { Box, Text, HStack, Stack, Center } from "@chakra-ui/react";
+import { useState, useEffect, useRef } from "react";
+import { Box, Button, Text, HStack, Stack, Center } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { Question, useQuestions } from "@/app/contexts/QuestionsContext";
 
@@ -14,77 +14,63 @@ export function ChoiceQuestion({
   question,
   questionIndex,
 }: ChoiceQuestionProps) {
-  const { dispatch } = useQuestions();
-  const [selectedChoiceIndex, setSelectedChoiceIndex] = useState(0);
-  const [choiceConfirmed, setChoiceConfirmed] = useState(false);
-  const isProcessingRef = useRef(false);
+  const { state, dispatch } = useQuestions();
+  const { data } = state;
+  const currentAnswer = data.questionary[questionIndex]?.answer;
+  const initialChoiceIndex = currentAnswer
+    ? question.choices?.findIndex(
+        (choice) => choice.choice === currentAnswer
+      ) || 0
+    : 0;
+  const [selectedChoiceIndex, setSelectedChoiceIndex] =
+    useState(initialChoiceIndex);
+  const choiceRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
-    setSelectedChoiceIndex(0);
-    setChoiceConfirmed(false);
-    isProcessingRef.current = false;
-  }, [questionIndex]);
-
-  const handleKeyPress = useCallback(
-    (e: KeyboardEvent) => {
-      if (isProcessingRef.current) {
-        console.log(
-          `[ChoiceQuestion] Key Press Ignored (Processing): ${e.key}`
-        );
-        return;
-      }
-
-      console.log(
-        `[ChoiceQuestion] Key Pressed: ${e.key}, Question Index: ${questionIndex}`
-      );
-
-      if (e.key === "Backspace") {
-        dispatch({ type: "GO_BACK" });
-        e.preventDefault();
-        e.stopPropagation();
-      } else if (!choiceConfirmed) {
-        if (e.key === "ArrowDown") {
-          setSelectedChoiceIndex((prevIndex) =>
-            prevIndex < question.choices!.length - 1 ? prevIndex + 1 : 0
-          );
-        }
-        if (e.key === "ArrowUp") {
-          setSelectedChoiceIndex((prevIndex) =>
-            prevIndex > 0 ? prevIndex - 1 : question.choices!.length - 1
-          );
-        }
-        if (e.key === "Enter") {
-          isProcessingRef.current = true;
-          setChoiceConfirmed(true);
-          dispatch({
-            type: "SELECT_CHOICE",
-            payload: {
-              selectedChoice: question.choices![selectedChoiceIndex].choice,
-            },
-          });
-          console.log(
-            `[ChoiceQuestion] Choice Confirmed: ${
-              question.choices![selectedChoiceIndex].choice
-            }`
-          );
-        }
-      }
-    },
-    [selectedChoiceIndex, choiceConfirmed, question, dispatch, questionIndex]
-  );
+    const newAnswer = data.questionary[questionIndex]?.answer;
+    const newChoiceIndex = newAnswer
+      ? question.choices?.findIndex((choice) => choice.choice === newAnswer) ||
+        0
+      : 0;
+    setSelectedChoiceIndex(newChoiceIndex);
+  }, [questionIndex, question.choices, data.questionary]);
 
   useEffect(() => {
-    if (question.choices) {
-      window.addEventListener("keydown", handleKeyPress);
-
-      return () => {
-        window.removeEventListener("keydown", handleKeyPress);
-        console.log(
-          `[ChoiceQuestion] Removed Key Press Listener for Question Index: ${questionIndex}`
-        );
-      };
+    const selectedButton = choiceRefs.current[selectedChoiceIndex];
+    if (selectedButton) {
+      selectedButton.focus();
     }
-  }, [question, handleKeyPress, questionIndex]);
+  }, [questionIndex, selectedChoiceIndex]);
+
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      const nextIndex = (index + 1) % question.choices!.length;
+      setSelectedChoiceIndex(nextIndex);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      const prevIndex =
+        (index - 1 + question.choices!.length) % question.choices!.length;
+      setSelectedChoiceIndex(prevIndex);
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      dispatch({
+        type: "SELECT_CHOICE",
+        payload: { selectedChoice: question.choices![index].choice },
+      });
+    } else if (e.key === "Backspace") {
+      e.preventDefault();
+      dispatch({ type: "GO_BACK" });
+    }
+  };
+
+  const handleClick = (index: number, choice: string) => {
+    setSelectedChoiceIndex(index);
+    dispatch({
+      type: "SELECT_CHOICE",
+      payload: { selectedChoice: choice },
+    });
+  };
 
   return (
     <Stack spacing={4}>
@@ -114,29 +100,28 @@ export function ChoiceQuestion({
                 delay: 0.1 + index * 0.05,
               }}
             >
-              <HStack
-                p={3}
+              <Button
+                ref={(el) => {
+                  choiceRefs.current[index] = el;
+                }}
+                px={2}
+                height="46px"
+                minWidth="300px"
                 borderRadius={8}
                 border="1px solid white"
                 bg={index === selectedChoiceIndex ? "blue.500" : "transparent"}
                 color={index === selectedChoiceIndex ? "white" : "gray.300"}
-                cursor="pointer"
-                onClick={() => {
-                  if (isProcessingRef.current) return;
-                  isProcessingRef.current = true;
-                  setSelectedChoiceIndex(index);
-                  setChoiceConfirmed(true);
-                  dispatch({
-                    type: "SELECT_CHOICE",
-                    payload: { selectedChoice: choice },
-                  });
-                }}
+                _hover={{ bg: "blue.500", color: "white" }}
+                _focus={{ bg: "blue.500" }}
+                onClick={() => handleClick(index, choice)}
+                onKeyDown={(e) => handleKeyDown(e, index)}
+                variant="unstyled"
               >
-                <HStack color="white">
+                <HStack spacing={4} color="white">
                   <Center
                     width="30px"
                     height="30px"
-                    borderRadius={8}
+                    borderRadius={6}
                     border="1px solid #818181"
                     bg="gray.800"
                   >
@@ -144,7 +129,7 @@ export function ChoiceQuestion({
                   </Center>
                   <Text fontWeight={500}>{choice}</Text>
                 </HStack>
-              </HStack>
+              </Button>
             </MotionBox>
           ))}
       </Stack>
