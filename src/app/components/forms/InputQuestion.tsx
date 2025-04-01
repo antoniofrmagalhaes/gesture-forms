@@ -6,7 +6,7 @@ import {
   UseFormSetValue,
   UseFormResetField,
 } from "react-hook-form";
-import { Question, FormValues } from "@/app/contexts/QuestionsContext"; 
+import { Question, FormValues } from "@/app/contexts/QuestionsContext";
 
 const MotionBox = motion(Box);
 
@@ -42,10 +42,15 @@ export function InputQuestion({
   // Efeito que sincroniza a resposta atual no campo de input.
   useEffect(() => {
     const currentAnswer = data.questionary[questionIndex]?.answer;
+    console.log(
+      `[InputQuestion] Question Index: ${questionIndex}, Current Answer in Data: ${currentAnswer}`
+    ); // Log para depurar o valor atual no data.questionary
     if (currentAnswer) {
-      setValue("answer", currentAnswer); // Define a resposta existente como o valor atual do campo de input.
+      setValue("answer", currentAnswer);
+      console.log(`[InputQuestion] Setting value to: ${currentAnswer}`); // Log para depurar o setValue
     } else {
-      resetField("answer"); // Reseta o campo de input se não houver resposta existente.
+      resetField("answer");
+      console.log(`[InputQuestion] Resetting field 'answer'`); // Log para depurar o resetField
     }
   }, [questionIndex, setValue, data.questionary, resetField]);
 
@@ -61,14 +66,17 @@ export function InputQuestion({
    */
   const handleInputKeyPress = async (e: React.KeyboardEvent) => {
     const input = e.currentTarget as HTMLInputElement;
+    console.log(
+      `[InputQuestion] Key Pressed: ${e.key}, Input Value: ${input.value}`
+    ); // Log para depurar o valor do input
     if (e.key === "Enter") {
       e.preventDefault();
       e.stopPropagation();
-      await handleNext(); // Avança para a próxima pergunta.
+      await handleNext();
     } else if (e.key === "Backspace" && input.value === "") {
       e.preventDefault();
       e.stopPropagation();
-      handleBack(); // Volta para a pergunta anterior se o campo de input estiver vazio.
+      handleBack();
     }
   };
 

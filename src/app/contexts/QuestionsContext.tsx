@@ -278,8 +278,13 @@ export function useProvideQuestions(): IQuestionsContextProps {
     const isValid = await trigger("answer");
 
     if (isValid) {
+      const answerValue = watch("answer");
+      console.log(
+        `[handleNext] Question Index: ${questionIndex}, Answer Value: ${answerValue}`
+      ); // Log para depurar o valor de watch("answer")
+
       if (questionIndex === 0) {
-        setUserName(watch("answer"));
+        setUserName(answerValue);
       }
 
       setData((prevData) => {
@@ -287,14 +292,15 @@ export function useProvideQuestions(): IQuestionsContextProps {
         if (updatedQuestionary[questionIndex]) {
           updatedQuestionary[questionIndex] = {
             question: questions[questionIndex]?.question,
-            answer: watch("answer"),
+            answer: answerValue,
           };
         } else {
           updatedQuestionary.push({
             question: questions[questionIndex]?.question,
-            answer: watch("answer"),
+            answer: answerValue,
           });
         }
+        console.log(`[handleNext] Updated Questionary:`, updatedQuestionary); // Log para depurar o estado do questionary
         return { questionary: updatedQuestionary };
       });
 
@@ -312,6 +318,10 @@ export function useProvideQuestions(): IQuestionsContextProps {
           setQuestionIndex(questions.length);
         }
       }
+    } else {
+      console.log(
+        `[handleNext] Validation failed for question index: ${questionIndex}`
+      ); // Log para depurar falhas de validação
     }
   };
 

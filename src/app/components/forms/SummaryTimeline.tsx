@@ -6,7 +6,11 @@ type SummaryTimelineProps = {
   onQuestionClick: (index: number) => void;
 };
 
-export default function SummaryTimeline({ data, onQuestionClick }: SummaryTimelineProps) {
+export default function SummaryTimeline(props: SummaryTimelineProps) {
+  const { data, onQuestionClick } = props;
+
+  console.log(`[SummaryTimeline] Data Questionary:`, data.questionary); // Log para depurar o conteúdo do questionary
+
   return (
     <Grid templateColumns="20px 2px auto" height="100%" gap={3} rowGap={6} position="relative" paddingY={4}>
       {data.questionary.map((item, index) => (
