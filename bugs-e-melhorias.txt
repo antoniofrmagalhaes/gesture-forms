@@ -1,0 +1,44 @@
+Análise de Bugs e Funcionalidades do Gesture Form
+Estado Atual do Formulário
+O formulário está funcionando até o ponto de submeter e mostrar o OnSuccessView. O fluxo atual é o seguinte:
+
+Tela de Carregamento (LoadingView): Aparece por 2 segundos (controlada por isLoading no QuestionsProvider).
+Formulário (FormView): Exibe o cabeçalho com o logotipo "GESTURE Forms", uma barra de progresso (ProgressBar), e um botão "Reiniciar Formulário". Renderiza o ServicesForm para exibir as perguntas (InputQuestion ou ChoiceQuestion) e, no rodapé, exibe outra barra de progresso e o FormNavigator para navegação ("Voltar", "Próximo", "Enviar").
+Perguntas:
+InputQuestion: Permite entrada de texto, com suporte a teclado (Enter para avançar, Backspace para voltar se o campo estiver vazio).
+ChoiceQuestion: Permite seleção de múltipla escolha, com suporte a teclado (setas para navegar, Enter para confirmar e avançar).
+As respostas são salvas no data.questionary no QuestionsProvider.
+Submissão: Quando o usuário chega à última pergunta e clica em "ENVIAR" (ou pressiona Enter), o handleSubmit chama o onSubmit, que muda o viewIndex para 1, renderizando o OnSuccessView.
+Tela de Sucesso (OnSuccessView): Exibe uma mensagem de sucesso, links, e uma contagem regressiva (10 segundos). Após a contagem, redireciona para a página inicial (ou outra ação definida em onRedirect).
+Bugs Potenciais
+Validação no InputQuestion Sem Feedback Visual:
+Descrição: O InputQuestion define uma validação (required: 'A resposta é obrigatória'), mas não exibe feedback visual se o usuário tentar avançar sem preencher o campo. O handleNext verifica a validação com trigger("answer"), mas se isValid for false, nada acontece, e o usuário não sabe por quê.
+Impacto: O usuário pode ficar confuso, achando que o formulário está travado.
+Solução Proposta: Adicionar feedback visual no InputQuestion para mostrar a mensagem de erro se o campo estiver vazio, usando o formState.errors do react-hook-form.
+Navegação por Teclado no ChoiceQuestion Pode Ser Confusa:
+Descrição: No ChoiceQuestion, o usuário navega pelas opções com as setas e confirma com Enter, mas precisa pressionar Enter novamente para avançar para a próxima pergunta. Isso pode não ser intuitivo, já que o usuário pode esperar que a seleção já avance automaticamente.
+Impacto: Experiência do usuário menos fluida, especialmente para quem prefere usar o teclado.
+Solução Proposta: Fazer com que a confirmação da escolha (primeiro Enter) já avance para a próxima pergunta, eliminando a necessidade de um segundo Enter.
+Botão "ENVIAR" no FormNavigator Não Indica Estado de Carregamento:
+Descrição: Quando o usuário clica em "ENVIAR", o handleSubmit é assíncrono (devido ao trigger), mas o botão não indica que a submissão está em andamento (ex.: não fica desabilitado ou mostra um ícone de carregamento).
+Impacto: O usuário pode clicar várias vezes no botão "ENVIAR", causando múltiplas submissões.
+Solução Proposta: Adicionar um estado de carregamento ao botão "ENVIAR" e desabilitá-lo enquanto a submissão está em andamento.
+Reiniciar Formulário Não Reseta Completamente o Estado:
+Descrição: O botão "Reiniciar Formulário" no FormView chama o handleResetForm, que reseta o questionIndex, data, selectedService, userName, e o campo answer. No entanto, ele não reseta o viewIndex, o que significa que, se o usuário reiniciar após a submissão (quando viewIndex é 1), o formulário não volta para a tela inicial (viewIndex permanece 1, e o OnSuccessView continua sendo exibido).
+Impacto: O usuário não consegue voltar ao formulário após a submissão sem recarregar a página.
+Solução Proposta: Adicionar a lógica para resetar o viewIndex no handleResetForm.
+Redirecionamento no OnSuccessView Pode Não Ser Ideal:
+Descrição: O OnSuccessView redireciona após 10 segundos usando onRedirect={() => handleViewChange(0)}. Isso muda o viewIndex para 0, voltando ao FormView, mas o estado do formulário pode não estar completamente limpo (ex.: o data.questionary pode ainda conter respostas antigas se o handleResetForm não for chamado).
+Impacto: O usuário pode ver respostas antigas ao voltar ao formulário, o que não é o comportamento esperado após uma submissão bem-sucedida.
+Solução Proposta: Chamar o handleResetForm no onRedirect do OnSuccessView para garantir que o formulário seja completamente reiniciado.
+Funcionalidades a Serem Adicionadas
+Feedback Visual para Validação:
+Adicionar feedback visual para campos obrigatórios no InputQuestion (ex.: mostrar "A resposta é obrigatória" abaixo do campo se o usuário tentar avançar sem preencher).
+Transição Mais Suave para o OnSuccessView:
+Adicionar uma animação de transição (usando framer-motion) ao mudar do FormView para o OnSuccessView no app/page.tsx, para tornar a experiência mais fluida.
+Botão de Reiniciar no OnSuccessView:
+Adicionar um botão no OnSuccessView para reiniciar o formulário imediatamente (em vez de esperar a contagem regressiva), chamando o handleResetForm e mudando o viewIndex para 0.
+Persistência de Dados (Opcional):
+Se desejado, salvar as respostas do usuário (ex.: em um backend ou no localStorage) quando o formulário for submetido.
+Validação Mais Avançada:
+Adicionar validações mais específicas para os campos (ex.: validar o formato do nome na primeira pergunta, ou limitar o tamanho das respostas).
