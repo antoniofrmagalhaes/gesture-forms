@@ -27,108 +27,50 @@ import {
   Button,
 } from "@chakra-ui/react";
 import SummaryTimeline from "./SummaryTimeline";
+import { useQuestions } from "@/app/contexts/QuestionsContext";
 
 type FormSummaryProps = {
-  data: { questionary: { question: string; answer: string }[] };
   layoutType: number; // Determines which layout to use (1 to 10)
-  onQuestionClick: (index: number) => void; // Função recebida do pai
 };
 
-export default function SummaryViewer({
-  data,
-  layoutType,
-  onQuestionClick,
-}: FormSummaryProps) {
-  console.log(`[SummaryViewer] Data Questionary:`, data.questionary); // Log para depurar o conteúdo do questionary
+export default function SummaryViewer({ layoutType }: FormSummaryProps) {
+  const { state } = useQuestions();
+  const { data } = state;
+
+  console.log(`[SummaryViewer] Data Questionary:`, data.questionary);
 
   switch (layoutType) {
     case 1:
-      return (
-        <ListCardsLayout
-          layoutType={layoutType}
-          data={data}
-          onQuestionClick={onQuestionClick}
-        />
-      );
+      return <ListCardsLayout data={data} />;
     case 2:
-      return (
-        <AccordionLayout
-          layoutType={layoutType}
-          data={data}
-          onQuestionClick={onQuestionClick}
-        />
-      );
+      return <AccordionLayout data={data} />;
     case 3:
-      return (
-        <TableLayout
-          layoutType={layoutType}
-          data={data}
-          onQuestionClick={onQuestionClick}
-        />
-      );
+      return <TableLayout data={data} />;
     case 4:
-      return (
-        <ChatLayout
-          layoutType={layoutType}
-          data={data}
-          onQuestionClick={onQuestionClick}
-        />
-      );
+      return <ChatLayout data={data} />;
     case 5:
-      return (
-        <ProgressBarsLayout
-          layoutType={layoutType}
-          data={data}
-          onQuestionClick={onQuestionClick}
-        />
-      );
+      return <ProgressBarsLayout data={data} />;
     case 6:
-      return <SummaryTimeline data={data} onQuestionClick={onQuestionClick} />;
+      return <SummaryTimeline data={data} />;
     case 7:
-      return (
-        <IconsBlocksLayout
-          layoutType={layoutType}
-          data={data}
-          onQuestionClick={onQuestionClick}
-        />
-      );
+      return <IconsBlocksLayout data={data} />;
     case 8:
-      return (
-        <ModalLayout
-          layoutType={layoutType}
-          data={data}
-          onQuestionClick={onQuestionClick}
-        />
-      );
+      return <ModalLayout data={data} />;
     case 9:
-      return (
-        <FlipCardsLayout
-          layoutType={layoutType}
-          data={data}
-          onQuestionClick={onQuestionClick}
-        />
-      );
+      return <FlipCardsLayout data={data} />;
     case 10:
-      return (
-        <FormStyleLayout
-          layoutType={layoutType}
-          data={data}
-          onQuestionClick={onQuestionClick}
-        />
-      );
+      return <FormStyleLayout data={data} />;
     default:
-      return (
-        <ListCardsLayout
-          layoutType={layoutType}
-          data={data}
-          onQuestionClick={onQuestionClick}
-        />
-      );
+      return <ListCardsLayout data={data} />;
   }
 }
 
 // 1. List Cards Layout
-function ListCardsLayout({ data }: FormSummaryProps) {
+function ListCardsLayout({
+  data,
+}: {
+  data: { questionary: { question: string; answer: string }[] };
+}) {
   return (
     <Stack spacing={4}>
       {data.questionary.map((item, index) => (
@@ -142,7 +84,11 @@ function ListCardsLayout({ data }: FormSummaryProps) {
 }
 
 // 2. Accordion Layout
-function AccordionLayout({ data }: FormSummaryProps) {
+function AccordionLayout({
+  data,
+}: {
+  data: { questionary: { question: string; answer: string }[] };
+}) {
   return (
     <Accordion allowMultiple>
       {data.questionary.map((item, index) => (
@@ -161,7 +107,11 @@ function AccordionLayout({ data }: FormSummaryProps) {
 }
 
 // 3. Table Layout
-function TableLayout({ data }: FormSummaryProps) {
+function TableLayout({
+  data,
+}: {
+  data: { questionary: { question: string; answer: string }[] };
+}) {
   return (
     <Table variant="simple">
       <Thead>
@@ -183,7 +133,11 @@ function TableLayout({ data }: FormSummaryProps) {
 }
 
 // 4. Chat Layout
-function ChatLayout({ data }: FormSummaryProps) {
+function ChatLayout({
+  data,
+}: {
+  data: { questionary: { question: string; answer: string }[] };
+}) {
   return (
     <VStack spacing={4} align="start">
       {data.questionary.map((item, index) => (
@@ -201,7 +155,11 @@ function ChatLayout({ data }: FormSummaryProps) {
 }
 
 // 5. Progress Bars Layout
-function ProgressBarsLayout({ data }: FormSummaryProps) {
+function ProgressBarsLayout({
+  data,
+}: {
+  data: { questionary: { question: string; answer: string }[] };
+}) {
   return (
     <VStack spacing={4}>
       {data.questionary.map((item, index) => (
@@ -215,48 +173,12 @@ function ProgressBarsLayout({ data }: FormSummaryProps) {
   );
 }
 
-// 6. Timeline Layout
-function TimelineLayout({ data }: FormSummaryProps) {
-  return (
-    <Stack
-      spacing={4}
-      position="relative"
-      _before={{
-        content: '""',
-        position: "absolute",
-        top: 0,
-        left: "15px",
-        height: "100%",
-        width: "2px",
-        bg: "gray.300",
-      }}
-    >
-      {data.questionary.map((item, index) => (
-        <Box
-          key={index}
-          pl={6}
-          position="relative"
-          _before={{
-            content: '""',
-            position: "absolute",
-            top: "8px",
-            left: "-15px",
-            width: "10px",
-            height: "10px",
-            borderRadius: "50%",
-            bg: "blue.500",
-          }}
-        >
-          <Text fontWeight="bold">{item.question}</Text>
-          <Text>{item.answer}</Text>
-        </Box>
-      ))}
-    </Stack>
-  );
-}
-
 // 7. Icons Blocks Layout
-function IconsBlocksLayout({ data }: FormSummaryProps) {
+function IconsBlocksLayout({
+  data,
+}: {
+  data: { questionary: { question: string; answer: string }[] };
+}) {
   return (
     <HStack spacing={4} wrap="wrap">
       {data.questionary.map((item, index) => (
@@ -277,7 +199,11 @@ function IconsBlocksLayout({ data }: FormSummaryProps) {
 }
 
 // 8. Modal Layout
-function ModalLayout({ data }: FormSummaryProps) {
+function ModalLayout({
+  data,
+}: {
+  data: { questionary: { question: string; answer: string }[] };
+}) {
   const [isOpen, setIsOpen] = useState(true);
   const onClose = () => setIsOpen(false);
   return (
@@ -307,7 +233,11 @@ function ModalLayout({ data }: FormSummaryProps) {
 }
 
 // 9. Flip Cards Layout
-function FlipCardsLayout({ data }: FormSummaryProps) {
+function FlipCardsLayout({
+  data,
+}: {
+  data: { questionary: { question: string; answer: string }[] };
+}) {
   return (
     <HStack spacing={4} wrap="wrap">
       {data.questionary.map((item, index) => (
@@ -334,7 +264,11 @@ function FlipCardsLayout({ data }: FormSummaryProps) {
 }
 
 // 10. Form Style Layout
-function FormStyleLayout({ data }: FormSummaryProps) {
+function FormStyleLayout({
+  data,
+}: {
+  data: { questionary: { question: string; answer: string }[] };
+}) {
   return (
     <Stack spacing={4}>
       {data.questionary.map((item, index) => (

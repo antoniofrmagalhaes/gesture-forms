@@ -1,102 +1,90 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Box, Text, HStack, Stack, Center } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { Question } from "@/app/contexts/QuestionsContext";
+import { Question, useQuestions } from "@/app/contexts/QuestionsContext";
 
 const MotionBox = motion(Box);
 
 type ChoiceQuestionProps = {
   question: Question;
-  handleChoiceSelection: (choice: string) => void;
-  handleNext: () => void;
-  handleBack: () => void;
   questionIndex: number;
 };
 
-/**
- * Componente `ChoiceQuestion` para renderizar uma pergunta de escolha múltipla.
- * Permite a seleção de uma opção usando o teclado ou o mouse.
- *
- * @param {Question} question - A pergunta a ser renderizada, incluindo as opções de escolha.
- * @param {(choice: string) => void} handleChoiceSelection - Função que manipula a seleção de uma escolha.
- * @param {() => Promise<void>} handleNext - Função para avançar para a próxima pergunta.
- * @param {() => void} handleBack - Função para voltar à pergunta anterior.
- * @param {number} questionIndex - Índice da pergunta atual.
- */
 export function ChoiceQuestion({
   question,
-  handleChoiceSelection,
-  handleNext,
-  handleBack,
   questionIndex,
 }: ChoiceQuestionProps) {
-  const [selectedChoiceIndex, setSelectedChoiceIndex] = useState(0); // Estado para armazenar o índice da escolha selecionada
-  const [choiceConfirmed, setChoiceConfirmed] = useState(false); // Estado para confirmar se a escolha foi feita
+  const { dispatch } = useQuestions();
+  const [selectedChoiceIndex, setSelectedChoiceIndex] = useState(0);
+  const [choiceConfirmed, setChoiceConfirmed] = useState(false);
+  const isProcessingRef = useRef(false);
 
-  // Efeito para resetar a escolha quando a pergunta muda
   useEffect(() => {
     setSelectedChoiceIndex(0);
     setChoiceConfirmed(false);
+    isProcessingRef.current = false;
   }, [questionIndex]);
 
-  // Efeito para capturar eventos de teclado e manipular a navegação/seleção
+  const handleKeyPress = useCallback(
+    (e: KeyboardEvent) => {
+      if (isProcessingRef.current) {
+        console.log(
+          `[ChoiceQuestion] Key Press Ignored (Processing): ${e.key}`
+        );
+        return;
+      }
+
+      console.log(
+        `[ChoiceQuestion] Key Pressed: ${e.key}, Question Index: ${questionIndex}`
+      );
+
+      if (e.key === "Backspace") {
+        dispatch({ type: "GO_BACK" });
+        e.preventDefault();
+        e.stopPropagation();
+      } else if (!choiceConfirmed) {
+        if (e.key === "ArrowDown") {
+          setSelectedChoiceIndex((prevIndex) =>
+            prevIndex < question.choices!.length - 1 ? prevIndex + 1 : 0
+          );
+        }
+        if (e.key === "ArrowUp") {
+          setSelectedChoiceIndex((prevIndex) =>
+            prevIndex > 0 ? prevIndex - 1 : question.choices!.length - 1
+          );
+        }
+        if (e.key === "Enter") {
+          isProcessingRef.current = true;
+          setChoiceConfirmed(true);
+          dispatch({
+            type: "SELECT_CHOICE",
+            payload: {
+              selectedChoice: question.choices![selectedChoiceIndex].choice,
+            },
+          });
+          console.log(
+            `[ChoiceQuestion] Choice Confirmed: ${
+              question.choices![selectedChoiceIndex].choice
+            }`
+          );
+        }
+      }
+    },
+    [selectedChoiceIndex, choiceConfirmed, question, dispatch, questionIndex]
+  );
+
   useEffect(() => {
     if (question.choices) {
-      /**
-       * Função para manipular eventos de pressionamento de teclas.
-       * Permite a navegação entre as escolhas e a confirmação de seleção.
-       *
-       * @param {KeyboardEvent} e - Evento de pressionamento de tecla.
-       */
-      const handleKeyPress = (e: KeyboardEvent) => {
-        if (e.key === "Backspace") {
-          handleBack();
-          e.preventDefault();
-          e.stopPropagation();
-        } else if (!choiceConfirmed) {
-          if (e.key === "ArrowDown") {
-            setSelectedChoiceIndex((prevIndex) =>
-              prevIndex < question.choices!.length - 1 ? prevIndex + 1 : 0
-            );
-          }
-          if (e.key === "ArrowUp") {
-            setSelectedChoiceIndex((prevIndex) =>
-              prevIndex > 0 ? prevIndex - 1 : question.choices!.length - 1
-            );
-          }
-          if (e.key === "Enter") {
-            setChoiceConfirmed(true);
-            handleChoiceSelection(
-              question.choices![selectedChoiceIndex].choice
-            );
-            console.log(
-              `Escolha confirmada: ${
-                question.choices![selectedChoiceIndex].choice
-              }`
-            );
-          }
-        } else if (e.key === "Enter" && choiceConfirmed) {
-          console.log("Avançando para a próxima pergunta");
-          handleNext();
-        }
-      };
-
-      // Adiciona o event listener para capturar as teclas pressionadas
       window.addEventListener("keydown", handleKeyPress);
 
-      // Remove o event listener quando o componente é desmontado ou quando as dependências mudam
       return () => {
         window.removeEventListener("keydown", handleKeyPress);
+        console.log(
+          `[ChoiceQuestion] Removed Key Press Listener for Question Index: ${questionIndex}`
+        );
       };
     }
-  }, [
-    selectedChoiceIndex,
-    choiceConfirmed,
-    question,
-    handleChoiceSelection,
-    handleNext,
-    handleBack,
-  ]);
+  }, [question, handleKeyPress, questionIndex]);
 
   return (
     <Stack spacing={4}>
@@ -134,10 +122,14 @@ export function ChoiceQuestion({
                 color={index === selectedChoiceIndex ? "white" : "gray.300"}
                 cursor="pointer"
                 onClick={() => {
-                  // Selecionar a escolha ao clicar
+                  if (isProcessingRef.current) return;
+                  isProcessingRef.current = true;
                   setSelectedChoiceIndex(index);
                   setChoiceConfirmed(true);
-                  handleChoiceSelection(choice);
+                  dispatch({
+                    type: "SELECT_CHOICE",
+                    payload: { selectedChoice: choice },
+                  });
                 }}
               >
                 <HStack color="white">

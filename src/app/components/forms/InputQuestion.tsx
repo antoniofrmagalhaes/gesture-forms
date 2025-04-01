@@ -1,86 +1,60 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Box, Input, HStack, Button, Text } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import {
-  UseFormRegister,
-  UseFormSetValue,
-  UseFormResetField,
-} from "react-hook-form";
-import { Question, FormValues } from "@/app/contexts/QuestionsContext";
+import { Question, useQuestions } from "@/app/contexts/QuestionsContext";
 
 const MotionBox = motion(Box);
 
 type InputQuestionProps = {
   question: Question;
-  register: UseFormRegister<FormValues>;
-  setValue: UseFormSetValue<FormValues>;
-  resetField: UseFormResetField<FormValues>;
-  data: { questionary: { question: string; answer: string }[] };
-  handleNext: () => Promise<void>;
-  handleBack: () => void;
   questionIndex: number;
 };
 
-/**
- * Componente `InputQuestion` para renderizar uma pergunta que requer entrada de texto.
- * Inclui animações de entrada e sincronização da resposta atual com o estado do formulário.
- *
- * Funcionalidades dos eventos de teclado (keypress):
- * - `Enter`: Avança para a próxima pergunta e salva a resposta atual.
- * - `Backspace`: Retrocede para a pergunta anterior se o campo de input estiver vazio.
- */
-export function InputQuestion({
-  question,
-  register,
-  setValue,
-  resetField,
-  data,
-  handleNext,
-  handleBack,
-  questionIndex,
-}: InputQuestionProps) {
-  // Efeito que sincroniza a resposta atual no campo de input.
+export function InputQuestion({ question, questionIndex }: InputQuestionProps) {
+  const { state, dispatch, register, setValue, resetField } = useQuestions();
+  const isProcessingRef = useRef(false);
+
   useEffect(() => {
-    const currentAnswer = data.questionary[questionIndex]?.answer;
+    const currentAnswer = state.data.questionary[questionIndex]?.answer;
     console.log(
       `[InputQuestion] Question Index: ${questionIndex}, Current Answer in Data: ${currentAnswer}`
-    ); // Log para depurar o valor atual no data.questionary
+    );
     if (currentAnswer) {
       setValue("answer", currentAnswer);
-      console.log(`[InputQuestion] Setting value to: ${currentAnswer}`); // Log para depurar o setValue
+      console.log(`[InputQuestion] Setting value to: ${currentAnswer}`);
     } else {
       resetField("answer");
-      console.log(`[InputQuestion] Resetting field 'answer'`); // Log para depurar o resetField
+      console.log(`[InputQuestion] Resetting field 'answer'`);
     }
-  }, [questionIndex, setValue, data.questionary, resetField]);
+    isProcessingRef.current = false; // Reset isProcessingRef on question change
+  }, [questionIndex, setValue, state.data.questionary, resetField]);
 
-  /**
-   * Manipula os eventos de pressionamento de teclas no campo de input.
-   * Avança para a próxima pergunta ao pressionar Enter ou volta à pergunta anterior ao pressionar Backspace.
-   *
-   * Funcionalidades dos eventos de teclado (keypress):
-   * - `Enter`: Avança para a próxima pergunta e salva a resposta atual.
-   * - `Backspace`: Retrocede para a pergunta anterior se o campo de input estiver vazio.
-   *
-   * @param {React.KeyboardEvent} e - O evento de pressionamento de tecla.
-   */
   const handleInputKeyPress = async (e: React.KeyboardEvent) => {
+    if (isProcessingRef.current) {
+      console.log(`[InputQuestion] Key Press Ignored (Processing): ${e.key}`);
+      return;
+    }
+
     const input = e.currentTarget as HTMLInputElement;
     console.log(
       `[InputQuestion] Key Pressed: ${e.key}, Input Value: ${input.value}`
-    ); // Log para depurar o valor do input
+    );
+
     if (e.key === "Enter") {
       e.preventDefault();
       e.stopPropagation();
-      await handleNext();
+      isProcessingRef.current = true;
+      dispatch({
+        type: "SUBMIT_ANSWER",
+        payload: { answer: input.value },
+      });
     } else if (e.key === "Backspace" && input.value === "") {
       e.preventDefault();
       e.stopPropagation();
-      handleBack();
+      dispatch({ type: "GO_BACK" });
     }
   };
 
-  // Variantes de animação para o efeito de entrada.
   const slideInVariants = {
     hidden: { opacity: 0, x: 50 },
     visible: { opacity: 1, x: 0 },
@@ -98,7 +72,7 @@ export function InputQuestion({
         transition={{ duration: 0.1, ease: "easeOut", delay: 0.1 }}
       >
         <Text fontSize={{ base: 32, lg: 42 }} fontWeight="500">
-          {question.question} {/* Renderiza o texto da pergunta */}
+          {question.question}
         </Text>
       </MotionBox>
 
@@ -112,12 +86,12 @@ export function InputQuestion({
       >
         <Input
           size="lg"
-          {...register("answer", { required: "A resposta é obrigatória" })} // Vincula o input ao formulário
-          placeholder={question.placeholder || "Digite sua resposta aqui..."} // Define o placeholder do input
+          {...register("answer", { required: "A resposta é obrigatória" })}
+          placeholder={question.placeholder || "Digite sua resposta aqui..."}
           _placeholder={{ color: "gray.200", fontWeight: 500 }}
           variant="flushed"
           focusBorderColor="blue.500"
-          onKeyDown={handleInputKeyPress} // Adiciona o manipulador de eventos de teclas
+          onKeyDown={handleInputKeyPress}
         />
       </MotionBox>
 
@@ -131,14 +105,24 @@ export function InputQuestion({
         <HStack mt={4}>
           <Button
             size="sm"
-            onClick={handleNext}
+            onClick={() => {
+              if (isProcessingRef.current) return;
+              isProcessingRef.current = true;
+              const input = document.querySelector(
+                "input[name='answer']"
+              ) as HTMLInputElement;
+              dispatch({
+                type: "SUBMIT_ANSWER",
+                payload: { answer: input.value },
+              });
+            }}
             color="white"
             borderRadius={8}
             backgroundColor="gray.800"
           >
-            OK {/* Botão para avançar manualmente */}
+            OK
           </Button>
-          <Text>Pressione Enter ↵</Text> {/* Indicação de ação ao usuário */}
+          <Text>Pressione Enter ↵</Text>
         </HStack>
       </MotionBox>
     </>

@@ -1,15 +1,19 @@
-import { Box, Text, Grid, GridItem, Stack } from '@chakra-ui/react';
-import React from 'react';
+import { Box, Text, Grid, GridItem, Stack } from "@chakra-ui/react";
+import React from "react";
+import { useQuestions } from "@/app/contexts/QuestionsContext";
 
 type SummaryTimelineProps = {
   data: { questionary: { question: string; answer: string }[] };
-  onQuestionClick: (index: number) => void;
 };
 
-export default function SummaryTimeline(props: SummaryTimelineProps) {
-  const { data, onQuestionClick } = props;
+export default function SummaryTimeline({ data }: SummaryTimelineProps) {
+  const { dispatch } = useQuestions();
 
-  console.log(`[SummaryTimeline] Data Questionary:`, data.questionary); // Log para depurar o conteúdo do questionary
+  const onQuestionClick = (index: number) => {
+    dispatch({ type: "JUMP_TO_QUESTION", payload: { index } });
+  };
+
+  console.log(`[SummaryTimeline] Data Questionary:`, data.questionary);
 
   return (
     <Grid templateColumns="20px 2px auto" height="100%" gap={3} rowGap={6} position="relative" paddingY={4}>

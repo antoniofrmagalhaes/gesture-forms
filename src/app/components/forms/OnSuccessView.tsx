@@ -4,6 +4,7 @@ import { Stack, Box, Text, Link } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import { motion } from "framer-motion";
+import { useQuestions } from "@/app/contexts/QuestionsContext";
 
 const MotionStack = motion(Stack);
 
@@ -14,7 +15,6 @@ export default function OnSuccessView({
   directRequestLink,
   supportEmail,
   countdownTime = 15,
-  onRedirect,
 }: {
   successMessage: string;
   followUpMessage: string;
@@ -22,8 +22,8 @@ export default function OnSuccessView({
   directRequestLink: string;
   supportEmail: string;
   countdownTime?: number;
-  onRedirect: () => void;
 }) {
+  const { dispatch } = useQuestions();
   const [countdown, setCountdown] = useState(countdownTime);
 
   useEffect(() => {
@@ -31,14 +31,15 @@ export default function OnSuccessView({
       setCountdown((prevCountdown) => {
         if (prevCountdown === 1) {
           clearInterval(timer);
-          onRedirect();
+          dispatch({ type: "SET_VIEW", payload: { index: 0 } });
+          dispatch({ type: "RESET_FORM" });
         }
         return prevCountdown - 1;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [onRedirect]);
+  }, [dispatch]);
 
   return (
     <MotionStack

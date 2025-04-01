@@ -1,91 +1,91 @@
-"use client";
-
-import { HStack, IconButton, Button } from '@chakra-ui/react';
-import { RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri';
-import { useQuestions } from '@/app/contexts/QuestionsContext'; // Ajuste o caminho
+import { Button, HStack, Text } from "@chakra-ui/react";
+import { useQuestions } from "@/app/contexts/QuestionsContext";
 
 export default function FormNavigator() {
-  const { questionIndex, questions, handleBack, handleNext, handleSubmit, onSubmit } = useQuestions();
+  const { state, dispatch } = useQuestions();
+  const { questionIndex, questions } = state;
+
+  const handleNext = () => {
+    const input = document.querySelector("input[name='answer']") as HTMLInputElement;
+    if (input) {
+      dispatch({
+        type: "SUBMIT_ANSWER",
+        payload: { answer: input.value },
+      });
+    } else {
+      dispatch({
+        type: "SELECT_CHOICE",
+        payload: { selectedChoice: "" },
+      });
+    }
+  };
+
+  const handleSubmit = () => {
+    dispatch({ type: "SET_VIEW", payload: { index: 1 } });
+  };
 
   return (
-    <>
-      {/* Navegação para telas menores */}
-      <HStack spacing={4} display={{ base: 'flex', md: 'none' }}>
-        {questionIndex > 0 && (
-          <IconButton
-            size="sm"
-            onClick={handleBack}
-            icon={<RiArrowLeftLine />}
-            aria-label="Voltar"
-            color="white"
-            fontWeight={500}
-            backgroundColor="gray.800"
-            _hover={{
-              backgroundColor: 'gray.800',
-            }}
-            _active={{
-              backgroundColor: 'gray.800',
-              boxShadow: 'none',
-            }}
-          />
-        )}
-        {questionIndex < questions.length && (
-          <IconButton
-            size="sm"
-            onClick={handleNext}
-            icon={<RiArrowRightLine />}
-            aria-label="Próximo"
-            color="white"
-            fontWeight={500}
-            backgroundColor="gray.800"
-            _hover={{
-              backgroundColor: 'gray.800',
-            }}
-            _active={{
-              backgroundColor: 'gray.800',
-              boxShadow: 'none',
-            }}
-          />
-        )}
-        {questionIndex === questions.length && (
+    <HStack spacing={4}>
+      {questionIndex > 0 && (
+        <Button
+          size="sm"
+          onClick={() => dispatch({ type: "GO_BACK" })}
+          color="white"
+          backgroundColor="gray.800"
+          fontWeight={500}
+          boxShadow="md"
+          _hover={{
+            backgroundColor: "gray.800",
+          }}
+          _active={{
+            backgroundColor: "gray.800",
+            boxShadow: "none",
+          }}
+        >
+          Voltar
+        </Button>
+      )}
+      {questionIndex < questions.length - 1 ? (
+        <>
+          <Text>pressione</Text>
           <Button
             size="sm"
-            onClick={handleSubmit(onSubmit)}
+            onClick={handleNext}
             color="white"
             backgroundColor="gray.800"
             fontWeight={500}
             boxShadow="md"
             _hover={{
-              backgroundColor: 'gray.800',
+              backgroundColor: "gray.800",
             }}
             _active={{
-              backgroundColor: 'gray.800',
-              boxShadow: 'none',
+              backgroundColor: "gray.800",
+              boxShadow: "none",
             }}
           >
-            ENVIAR
-          </Button>
-        )}
-      </HStack>
-
-      {/* Navegação para telas maiores */}
-      <HStack display={{ base: 'none', md: 'flex' }} spacing={4}>
-        {questionIndex > 0 && (
-          <Button onClick={handleBack} variant="link" leftIcon={<RiArrowLeftLine />} color="white" fontWeight={500}>
-            Voltar
-          </Button>
-        )}
-        {questionIndex < questions.length && (
-          <Button onClick={handleNext} variant="link" rightIcon={<RiArrowRightLine />} color="white" fontWeight={500}>
             Próximo
           </Button>
-        )}
-        {questionIndex === questions.length && (
-          <Button type="submit" variant="link" color="white" fontWeight={500}>
-            pressione<strong> Enter </strong> ↵ para enviar
-          </Button>
-        )}
-      </HStack>
-    </>
+          <Text>ENTER ↵</Text>
+        </>
+      ) : (
+        <Button
+          size="sm"
+          onClick={handleSubmit}
+          color="white"
+          backgroundColor="gray.800"
+          fontWeight={500}
+          boxShadow="md"
+          _hover={{
+            backgroundColor: "gray.800",
+          }}
+          _active={{
+            backgroundColor: "gray.800",
+            boxShadow: "none",
+          }}
+        >
+          Enviar
+        </Button>
+      )}
+    </HStack>
   );
 }

@@ -6,47 +6,15 @@ import OnSuccessView from "@/app/components/forms/OnSuccessView";
 import { useQuestions } from "@/app/contexts/QuestionsContext";
 
 export default function HomePage() {
-  const {
-    viewIndex,
-    isLoading,
-    onSubmit,
-    resetField,
-    setValue,
-    handleSubmit,
-    handleResetForm,
-    data,
-    questions,
-    register,
-    handleChoiceSelection,
-    jumpToQuestion,
-    questionIndex,
-    handleBack,
-    handleNext,
-    handleViewChange,
-  } = useQuestions();
+  const { state } = useQuestions();
+  const { isLoading, viewIndex } = state;
 
   if (isLoading) {
     return <LoadingView />;
   }
 
   if (viewIndex === 0) {
-    return (
-      <FormView
-        onSubmit={onSubmit}
-        resetField={resetField}
-        setValue={setValue}
-        handleSubmit={handleSubmit}
-        handleResetForm={handleResetForm}
-        data={data}
-        questions={questions}
-        register={register}
-        handleChoiceSelection={handleChoiceSelection}
-        jumpToQuestion={jumpToQuestion}
-        questionIndex={questionIndex}
-        handleBack={handleBack}
-        handleNext={handleNext}
-      />
-    );
+    return <FormView />;
   }
 
   return (
@@ -57,7 +25,6 @@ export default function HomePage() {
       directRequestLink="#"
       supportEmail="support@techincept.com"
       countdownTime={10}
-      onRedirect={() => handleViewChange(0)}
     />
   );
 }

@@ -3,45 +3,20 @@ import { MdRestartAlt } from "react-icons/md";
 import ProgressBar from "@/app/components/forms/ProgressBar";
 import FormNavigator from "@/app/components/forms/FormNavigator";
 import ServicesForm from "@/app/components/forms/ServicesForm";
-import {
-  UseFormHandleSubmit,
-  UseFormRegister,
-  UseFormSetValue,
-  UseFormResetField,
-} from "react-hook-form";
-import { FormValues, Question } from "@/app/contexts/QuestionsContext";
+import { useQuestions } from "@/app/contexts/QuestionsContext";
 
-type FormViewProps = {
-  handleSubmit: UseFormHandleSubmit<FormValues>;
-  handleResetForm: () => void;
-  data: { questionary: { question: string; answer: string }[] };
-  questions: Question[];
-  register: UseFormRegister<FormValues>;
-  handleChoiceSelection: (choice: string) => void;
-  jumpToQuestion: (index: number) => void;
-  questionIndex: number;
-  handleBack: () => void;
-  handleNext: () => Promise<void>;
-  setValue: UseFormSetValue<FormValues>;
-  resetField: UseFormResetField<FormValues>;
-  onSubmit: () => void;
-};
+export default function FormView() {
+  const { state, dispatch, handleSubmit } = useQuestions();
+  const { questionIndex, questions } = state;
 
-export default function FormView({
-  handleSubmit,
-  handleResetForm,
-  data,
-  questions,
-  register,
-  handleChoiceSelection,
-  jumpToQuestion,
-  questionIndex,
-  handleBack,
-  handleNext,
-  setValue,
-  resetField,
-  onSubmit,
-}: FormViewProps) {
+  const onSubmit = () => {
+    dispatch({ type: "SET_VIEW", payload: { index: 1 } });
+  };
+
+  const handleResetForm = () => {
+    dispatch({ type: "RESET_FORM" });
+  };
+
   return (
     <Box
       as="form"
@@ -94,18 +69,7 @@ export default function FormView({
         </Button>
       </Flex>
 
-      <ServicesForm
-        data={data}
-        questions={questions}
-        register={register}
-        handleChoiceSelection={handleChoiceSelection}
-        jumpToQuestion={jumpToQuestion}
-        questionIndex={questionIndex}
-        handleBack={handleBack}
-        handleNext={handleNext}
-        setValue={setValue}
-        resetField={resetField}
-      />
+      <ServicesForm />
 
       <Flex
         width="100%"
