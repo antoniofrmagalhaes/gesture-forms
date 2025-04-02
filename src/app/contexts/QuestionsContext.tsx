@@ -22,12 +22,7 @@ type Choice = {
   choice: string;
 };
 
-export type ServiceType =
-  | "Software House"
-  | "Integracoes de Sistemas"
-  | "Criacao de Websites"
-  | "Criacao de Landing Pages"
-  | "Hospedagem";
+export type ServiceType = string;
 
 interface RawQuestion {
   question: string;
@@ -200,7 +195,7 @@ const questionsReducer = (state: State, action: Action): State => {
 
         return {
           ...newState,
-          selectedService: selectedChoice as ServiceType,
+          selectedService: selectedChoice,
           questions: newQuestions,
           questionIndex: state.questionIndex + 1,
           isNavigating: false,
@@ -335,20 +330,24 @@ const QuestionsProvider: FC<IQuestionsProvider> = ({ children }) => {
     });
 
   useEffect(() => {
-    try {
-      const { InitialQuestions, MiddleQuestions, FinalQuestions } =
-        questionsData;
-      dispatch({
-        type: "LOAD_QUESTIONS",
-        payload: {
-          initialQuestions: validateQuestions(InitialQuestions),
-          middleQuestions: validateQuestions(MiddleQuestions),
-          finalQuestions: validateQuestions(FinalQuestions),
-        },
-      });
-    } catch (error) {
-      console.error("Erro ao carregar perguntas do JSON:", error);
-    }
+    const loadQuestions = async () => {
+      try {
+        const { InitialQuestions, MiddleQuestions, FinalQuestions } =
+          questionsData;
+        dispatch({
+          type: "LOAD_QUESTIONS",
+          payload: {
+            initialQuestions: validateQuestions(InitialQuestions),
+            middleQuestions: validateQuestions(MiddleQuestions),
+            finalQuestions: validateQuestions(FinalQuestions),
+          },
+        });
+      } catch (error) {
+        console.error("Erro ao carregar perguntas:", error);
+      }
+    };
+
+    loadQuestions();
   }, []);
 
   useEffect(() => {
