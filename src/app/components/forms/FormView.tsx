@@ -1,4 +1,11 @@
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Text,
+  Icon,
+  useBreakpointValue,
+} from "@chakra-ui/react";
 import { MdRestartAlt } from "react-icons/md";
 import ProgressBar from "@/app/components/forms/ProgressBar";
 import FormNavigator from "@/app/components/forms/FormNavigator";
@@ -9,12 +16,36 @@ export default function FormView() {
   const { state, dispatch, handleSubmit } = useQuestions();
   const { questionIndex, questions } = state;
 
+  const buttonVariant = useBreakpointValue(
+    {
+      base: "icon", 
+      md: "text", 
+    },
+    {
+      fallback: "text",
+    }
+  );
+
   const onSubmit = () => {
     dispatch({ type: "SET_VIEW", payload: { index: 1 } });
   };
 
   const handleResetForm = () => {
     dispatch({ type: "RESET_FORM" });
+  };
+
+  const commonButtonProps = {
+    size: { base: "xs", sm: "sm" },
+    color: "white",
+    backgroundColor: "gray.800",
+    boxShadow: "md",
+    _hover: {
+      backgroundColor: "gray.800",
+    },
+    _active: {
+      backgroundColor: "gray.800",
+      boxShadow: "none",
+    },
   };
 
   return (
@@ -50,22 +81,21 @@ export default function FormView() {
           />
         </Box>
         <Button
-          size={{ base: "xs", sm: "sm" }}
+          {...commonButtonProps}
           onClick={handleResetForm}
-          color="white"
-          backgroundColor="gray.800"
-          fontWeight={500}
-          rightIcon={<MdRestartAlt />}
-          boxShadow="md"
-          _hover={{
-            backgroundColor: "gray.800",
-          }}
-          _active={{
-            backgroundColor: "gray.800",
-            boxShadow: "none",
-          }}
+          fontWeight={buttonVariant === "text" ? 500 : undefined}
+          {...(buttonVariant === "icon"
+            ? { "aria-label": "Reiniciar Formulário" }
+            : {})}
         >
-          Reiniciar Formulário
+          {buttonVariant === "icon" ? (
+            <Icon as={MdRestartAlt} fontSize={18} />
+          ) : (
+            <>
+              Reiniciar Formulário
+              <Icon as={MdRestartAlt} ml={2} />
+            </>
+          )}
         </Button>
       </Flex>
 
