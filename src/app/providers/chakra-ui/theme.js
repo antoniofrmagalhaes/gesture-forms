@@ -88,13 +88,13 @@ const theme = extendTheme({
     },
   },
   breakpoints: {
-    xs: "320px",
-    sm: "450px",
-    md: "700px",
-    lg: "1024px",
-    xl: "1280px",
-    xxl: "1440px",
-    xxxl: "1920px",
+    xs: "20em", // 320px
+    sm: "28.125em", // 450px
+    md: "43.75em", // 700px
+    lg: "64em", // 1024px
+    xl: "80em", // 1280px
+    xxl: "90em", // 1440px
+    xxxl: "120em", // 1920px
   },
 });
 
