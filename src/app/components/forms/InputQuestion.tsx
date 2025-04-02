@@ -26,7 +26,7 @@ export function InputQuestion({ question, questionIndex }: InputQuestionProps) {
       resetField("answer");
       console.log(`[InputQuestion] Resetting field 'answer'`);
     }
-    isProcessingRef.current = false; // Reset isProcessingRef on question change
+    isProcessingRef.current = false;
   }, [questionIndex, setValue, state.data.questionary, resetField]);
 
   const handleInputKeyPress = async (e: React.KeyboardEvent) => {
@@ -64,19 +64,6 @@ export function InputQuestion({ question, questionIndex }: InputQuestionProps) {
   return (
     <>
       <MotionBox
-        key={`input-${questionIndex}`}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        variants={slideInVariants}
-        transition={{ duration: 0.1, ease: "easeOut", delay: 0.1 }}
-      >
-        <Text fontSize={{ base: 32, lg: 42 }} fontWeight="500">
-          {question.question}
-        </Text>
-      </MotionBox>
-
-      <MotionBox
         key={`input-field-${questionIndex}`}
         initial="hidden"
         animate="visible"
@@ -100,7 +87,7 @@ export function InputQuestion({ question, questionIndex }: InputQuestionProps) {
         animate="visible"
         exit="exit"
         variants={slideInVariants}
-        transition={{ duration: 0.1, ease: "easeOut", delay: 0.3 }}
+        transition={{ duration: 0.05, ease: "easeOut", delay: 0.3 }}
       >
         <HStack mt={4}>
           <Button

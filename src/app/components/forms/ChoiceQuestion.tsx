@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Box, Button, Text, HStack, Stack, Center } from "@chakra-ui/react";
+import { Box, Button, HStack, Stack, Center, Text } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { Question, useQuestions } from "@/app/contexts/QuestionsContext";
 
@@ -25,15 +25,6 @@ export function ChoiceQuestion({
   const [selectedChoiceIndex, setSelectedChoiceIndex] =
     useState(initialChoiceIndex);
   const choiceRefs = useRef<(HTMLButtonElement | null)[]>([]);
-
-  useEffect(() => {
-    const newAnswer = data.questionary[questionIndex]?.answer;
-    const newChoiceIndex = newAnswer
-      ? question.choices?.findIndex((choice) => choice.choice === newAnswer) ||
-        0
-      : 0;
-    setSelectedChoiceIndex(newChoiceIndex);
-  }, [questionIndex, question.choices, data.questionary]);
 
   useEffect(() => {
     const selectedButton = choiceRefs.current[selectedChoiceIndex];
@@ -74,18 +65,6 @@ export function ChoiceQuestion({
 
   return (
     <Stack spacing={4}>
-      <MotionBox
-        key={`choice-${questionIndex}`}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        transition={{ duration: 0.15, ease: "easeOut", delay: 0.05 }}
-      >
-        <Text fontSize={{ base: 32, lg: 42 }} fontWeight="500">
-          {question.question}
-        </Text>
-      </MotionBox>
-
       <Stack spacing={4}>
         {question.choices &&
           question.choices.map(({ key, choice }, index) => (
@@ -97,7 +76,7 @@ export function ChoiceQuestion({
               transition={{
                 duration: 0.15,
                 ease: "easeOut",
-                delay: 0.1 + index * 0.05,
+                delay: 0.05 + index * 0.05,
               }}
             >
               <Button

@@ -1,0 +1,259 @@
+{
+  "InitialQuestions": [
+    {
+      "question": "Como devemos chamá-lo?",
+      "placeholder": "Digite seu nome",
+      "inputType": "input"
+    }
+  ],
+  "MiddleQuestions": [
+    {
+      "question": "Qual tipo de serviço você gostaria de contratar?",
+      "inputType": "choice",
+      "choices": [
+        { "key": 1, "choice": "Software House" },
+        { "key": 2, "choice": "Integracoes de Sistemas" },
+        { "key": 3, "choice": "Criacao de Websites" },
+        { "key": 4, "choice": "Criacao de Landing Pages" },
+        { "key": 5, "choice": "Hospedagem" }
+      ],
+      "decisionPoint": true,
+      "branches": {
+        "Software House": [
+          {
+            "question": "Descreva o objetivo ou a ideia do software que você deseja.",
+            "placeholder": "Ex.: Um sistema de gerenciamento de pedidos para restaurantes.",
+            "inputType": "input"
+          },
+          {
+            "question": "Quais são as principais funcionalidades que você precisa no software?",
+            "placeholder": "Ex.: Controle de usuários, relatórios, integração com APIs.",
+            "inputType": "input"
+          },
+          {
+            "question": "Você já tem os detalhes do que o software precisa fazer ou gostaria de nossa ajuda para definir isso?",
+            "placeholder": "Ex.: Já tenho uma especificação detalhada.",
+            "inputType": "input"
+          },
+          {
+            "question": "Quando você gostaria de ver a primeira versão do seu software pronta?",
+            "inputType": "choice",
+            "choices": [
+              { "key": 1, "choice": "Imediatamente" },
+              { "key": 2, "choice": "1 mês" },
+              { "key": 3, "choice": "2 meses" },
+              { "key": 4, "choice": "6 meses" },
+              { "key": 5, "choice": "Sem data definida" }
+            ]
+          },
+          {
+            "question": "Qual seria o orçamento ideal para você investir nesse software?",
+            "inputType": "choice",
+            "choices": [
+              { "key": 1, "choice": "Até R$ 5.000" },
+              { "key": 2, "choice": "R$ 5.000 - R$ 25.000" },
+              { "key": 3, "choice": "R$ 25.000 - R$ 100.000" },
+              { "key": 4, "choice": "R$ 100.000 - R$ 500.000" },
+              { "key": 5, "choice": "Acima de R$ 500.000" }
+            ]
+          }
+        ],
+        "Integracoes de Sistemas": [
+          {
+            "question": "Quais sistemas você deseja integrar?",
+            "placeholder": "Ex.: Sistema de gestão com plataforma de e-commerce.",
+            "inputType": "input"
+          },
+          {
+            "question": "Existem especificações ou APIs disponíveis para os sistemas que você quer integrar?",
+            "placeholder": "Ex.: Sim, tenho documentação das APIs.",
+            "inputType": "input"
+          },
+          {
+            "question": "Que tipo de comunicação você precisa entre os sistemas?",
+            "placeholder": "Ex.: Envio de pedidos, sincronização de dados, etc.",
+            "inputType": "input"
+          },
+          {
+            "question": "Qual é o nível de automação desejado para essas integrações?",
+            "inputType": "choice",
+            "choices": [
+              { "key": 1, "choice": "Totalmente automatizado" },
+              { "key": 2, "choice": "Semi-automatizado" },
+              { "key": 3, "choice": "Manual com alguns gatilhos" }
+            ]
+          },
+          {
+            "question": "Qual seria o orçamento ideal para você investir nessas integrações?",
+            "inputType": "choice",
+            "choices": [
+              { "key": 1, "choice": "Até R$ 5.000" },
+              { "key": 2, "choice": "R$ 5.000 - R$ 25.000" },
+              { "key": 3, "choice": "R$ 25.000 - R$ 100.000" },
+              { "key": 4, "choice": "R$ 100.000 - R$ 500.000" },
+              { "key": 5, "choice": "Acima de R$ 500.000" }
+            ]
+          }
+        ],
+        "Criacao de Websites": [
+          {
+            "question": "Qual é o objetivo principal do seu website?",
+            "placeholder": "Ex.: Vender produtos, promover serviços, compartilhar informações.",
+            "inputType": "input"
+          },
+          {
+            "question": "Quem é o público-alvo do seu website?",
+            "placeholder": "Ex.: Jovens empreendedores, famílias, empresas de tecnologia.",
+            "inputType": "input"
+          },
+          {
+            "question": "Quais funcionalidades você deseja no seu website?",
+            "placeholder": "Ex.: Blog, loja virtual, área de login, formulário de contato.",
+            "inputType": "input"
+          },
+          {
+            "question": "Você tem preferência por algum estilo de design?",
+            "inputType": "choice",
+            "choices": [
+              { "key": 1, "choice": "Minimalista" },
+              { "key": 2, "choice": "Moderno" },
+              { "key": 3, "choice": "Clássico" },
+              { "key": 4, "choice": "Sem preferência" }
+            ]
+          },
+          {
+            "question": "Qual é o prazo ideal para o lançamento do seu website?",
+            "inputType": "choice",
+            "choices": [
+              { "key": 1, "choice": "Imediatamente" },
+              { "key": 2, "choice": "1 mês" },
+              { "key": 3, "choice": "2 meses" },
+              { "key": 4, "choice": "3 meses ou mais" },
+              { "key": 5, "choice": "Sem data definida" }
+            ]
+          },
+          {
+            "question": "Qual seria o orçamento ideal para você investir nesse website?",
+            "inputType": "choice",
+            "choices": [
+              { "key": 1, "choice": "Até R$ 3.000" },
+              { "key": 2, "choice": "R$ 3.000 - R$ 10.000" },
+              { "key": 3, "choice": "R$ 10.000 - R$ 30.000" },
+              { "key": 4, "choice": "R$ 30.000 - R$ 100.000" },
+              { "key": 5, "choice": "Acima de R$ 100.000" }
+            ]
+          }
+        ],
+        "Criacao de Landing Pages": [
+          {
+            "question": "Qual é o objetivo principal da sua landing page?",
+            "placeholder": "Ex.: Capturar leads, promover um produto, divulgar um evento.",
+            "inputType": "input"
+          },
+          {
+            "question": "Quem é o público-alvo da sua landing page?",
+            "placeholder": "Ex.: Profissionais de marketing, estudantes, consumidores de tecnologia.",
+            "inputType": "input"
+          },
+          {
+            "question": "Quais elementos você deseja incluir na sua landing page?",
+            "placeholder": "Ex.: Formulário de contato, depoimentos, vídeo promocional.",
+            "inputType": "input"
+          },
+          {
+            "question": "Você tem preferência por algum estilo de design para a landing page?",
+            "inputType": "choice",
+            "choices": [
+              { "key": 1, "choice": "Minimalista" },
+              { "key": 2, "choice": "Moderno" },
+              { "key": 3, "choice": "Vibrante" },
+              { "key": 4, "choice": "Sem preferência" }
+            ]
+          },
+          {
+            "question": "Qual é o prazo ideal para o lançamento da sua landing page?",
+            "inputType": "choice",
+            "choices": [
+              { "key": 1, "choice": "Imediatamente" },
+              { "key": 2, "choice": "1 semana" },
+              { "key": 3, "choice": "2 semanas" },
+              { "key": 4, "choice": "1 mês ou mais" },
+              { "key": 5, "choice": "Sem data definida" }
+            ]
+          },
+          {
+            "question": "Qual seria o orçamento ideal para você investir nessa landing page?",
+            "inputType": "choice",
+            "choices": [
+              { "key": 1, "choice": "Até R$ 1.000" },
+              { "key": 2, "choice": "R$ 1.000 - R$ 5.000" },
+              { "key": 3, "choice": "R$ 5.000 - R$ 15.000" },
+              { "key": 4, "choice": "R$ 15.000 - R$ 50.000" },
+              { "key": 5, "choice": "Acima de R$ 50.000" }
+            ]
+          }
+        ],
+        "Hospedagem": [
+          {
+            "question": "Que tipo de site você deseja hospedar?",
+            "placeholder": "Ex.: Website institucional, loja virtual, blog.",
+            "inputType": "input"
+          },
+          {
+            "question": "Qual é o tráfego mensal esperado para o seu site?",
+            "inputType": "choice",
+            "choices": [
+              { "key": 1, "choice": "Até 1.000 visitantes" },
+              { "key": 2, "choice": "1.000 - 10.000 visitantes" },
+              { "key": 3, "choice": "10.000 - 50.000 visitantes" },
+              { "key": 4, "choice": "50.000 - 100.000 visitantes" },
+              { "key": 5, "choice": "Mais de 100.000 visitantes" }
+            ]
+          },
+          {
+            "question": "Você tem necessidades específicas de segurança ou desempenho?",
+            "placeholder": "Ex.: Certificado SSL, proteção contra DDoS, alta disponibilidade.",
+            "inputType": "input"
+          },
+          {
+            "question": "Você já possui um domínio ou precisa de ajuda para adquirir um?",
+            "inputType": "choice",
+            "choices": [
+              { "key": 1, "choice": "Já possuo um domínio" },
+              { "key": 2, "choice": "Preciso de ajuda para adquirir um domínio" }
+            ]
+          },
+          {
+            "question": "Qual é o prazo ideal para iniciar a hospedagem?",
+            "inputType": "choice",
+            "choices": [
+              { "key": 1, "choice": "Imediatamente" },
+              { "key": 2, "choice": "1 semana" },
+              { "key": 3, "choice": "2 semanas" },
+              { "key": 4, "choice": "1 mês ou mais" },
+              { "key": 5, "choice": "Sem data definida" }
+            ]
+          },
+          {
+            "question": "Qual seria o orçamento ideal para você investir na hospedagem?",
+            "inputType": "choice",
+            "choices": [
+              { "key": 1, "choice": "Até R$ 50/mês" },
+              { "key": 2, "choice": "R$ 50 - R$ 150/mês" },
+              { "key": 3, "choice": "R$ 150 - R$ 500/mês" },
+              { "key": 4, "choice": "R$ 500 - R$ 1.500/mês" },
+              { "key": 5, "choice": "Acima de R$ 1.500/mês" }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "FinalQuestions": [
+    {
+      "question": "Informe nos o seu e-mail para que possamos lhe enviar nossa melhor proposta.",
+      "placeholder": "Digite seu e-mail",
+      "inputType": "input"
+    }
+  ]
+}
